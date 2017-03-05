@@ -1,0 +1,91 @@
+public interface Subject {
+
+public void subscribeObserver(Observer observer);
+public void unSubscribeObserver(Observer observer);
+public void notifyObservers();
+public String addStock();
+}
+
+
+public interface Observer {
+public void update(Map<String, Double> stocklist);
+}
+
+
+public class StockMarket implements Subject{
+private final List<Observer>observers;
+Map<String,Double> stocklist = new HashMap<String,Double>();
+
+@Override
+public void subscribeObserver(Observer observer) {
+observers.add(observer);
+}
+@Override
+public void unSubscribeObserver(Observer observer) {
+int index = observers.indexOf(observer);
+observers.remove(index);
+}
+@Override
+public void notifyObservers() {
+for(Observer observer : observers){
+observer.update(stockList);
+}
+}
+@Override
+public void addStock((String stockSymbol, Double price) {
+stocklist.put(stockSymbol, price); 
+notifyObservers();
+}
+}
+
+
+public class StockBuyer implements Observer {
+
+private StockMarket stockMarket;
+
+@Override
+public void update(Map<String, Double> stocklist) {
+ System.out.println("StockBuyer: stocklist is changed:");
+ Iterator iter = stocklist.entrySet().iterator();
+ while (iter.hasNext()) {
+ Map.Entry entry = (Map.Entry) iter.next();
+ String key = (String) entry.getKey();
+ Double value = (Double) entry.getValue();
+ System.out.println(key + " - $" + value);
+ } 
+
+} 
+
+
+public class StockViewer implements Observer {
+
+private StockMarket stockMarket;
+
+@Override
+public void update(Map<String, Double> stocklist) {
+ System.out.println("StockBuyer: stocklist is changed:");
+ Iterator iter = stocklist.entrySet().iterator();
+ while (iter.hasNext()) {
+ Map.Entry entry = (Map.Entry) iter.next();
+ String key = (String) entry.getKey();
+ Double value = (Double) entry.getValue();
+ System.out.println(key + " - $" + value);
+ } 
+
+} 
+
+
+public class Application {
+public static void main(String[] args) {
+ StockMarket market = new StockMarket();
+ StockBuyer buyer = new StockBuyer();
+ StockViewer viewer = new StockViewer();
+ market.addStock("ORC", 12.23);
+ market.addStock("MSC", 45.78);
+
+ market.update("ORC", 12.34);
+ market.update("MSC", 44.68);
+ }
+}
+
+
